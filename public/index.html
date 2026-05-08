@@ -8,10 +8,10 @@
   <link rel="icon" href="/public/favicon.ico" type="image/x-icon" />
   <!-- You may choose to use the message constants defined in the file below -->
   <script src="/utils/constants.js"></script>
-  <title>ChatCademy</title>
+  <title>Chatroom Project</title>
 </head>
 <body>
-  <h2>ChatCademy</h2>
+  <h2>Chatroom Project</h2>
   <div class="chat">
     <!-- Messages will appear here -->
   </div>
@@ -23,11 +23,14 @@
   <script> 
     ////////////////////////////////////////////////
     ////////////// VARIABLES ///////////////////////
+    // import { PORT } from '../utils/constants.js'
     ////////////////////////////////////////////////
   
     // This variable will hold the WebSocket client connection. 
     // Initialize in the init() function
     let wsClient; 
+
+    
     
     ////////////////////////////////////////////////
     //////////////// DOM SETUP /////////////////////
@@ -69,12 +72,16 @@
 
       // TODO: 
       // Exercise 4: Create a new WebSocket connection with the server using the ws protocol.
-      const URL = '??://localhost:' + PORT;
+      const URL = 'ws://localhost:' + PORT;
 
+      wsClient = new WebSocket(URL);
+      
 
       // TODO:
       // Exercise 5: Respond to connections by defining the .onopen event handler.
-
+      wsClient.onopen = () => {
+        console.log("Connected to the Websocket Server.")
+      }
 
       // TODO:
       // Exercise 7: Respond to messages from the servery by defining the .onmessage event handler

@@ -13,3 +13,8 @@ if (typeof module !== "undefined" && module.exports) {
     CLIENT
   }
 }
+// // Browser global
+if (typeof window !== "undefined") {
+  window.PORT = PORT;
+  window.CLIENT = CLIENT;
+}

@@ -17,18 +17,25 @@ const { PORT, CLIENT } = CONSTANTS;
 
 // Create the HTTP server
 const server = http.createServer((req, res) => {
-  // get the file path from req.url, or '/public/index.html' if req.url is '/'
-  const filePath = ( req.url === '/' ) ? '/public/index.html' : req.url;
+  const filePath = (req.url === '/') ? '/public/index.html' : req.url;
+  const fullPath = path.join(__dirname, filePath);
 
-  // determine the contentType by the file extension
-  const extname = path.extname(filePath);
-  let contentType = 'text/html';
-  if (extname === '.js') contentType = 'text/javascript';
-  else if (extname === '.css') contentType = 'text/css';
+  fs.exists(fullPath, (exists) => {
+    if (!exists) {
+      res.writeHead(404);
+      res.end('Not Found');
+      return;
+    }
 
-  // pipe the proper file to the res object
-  res.writeHead(200, { 'Content-Type': contentType });
-  fs.createReadStream(`${__dirname}/${filePath}`, 'utf8').pipe(res);
+    const extname = path.extname(fullPath);
+    let contentType = 'text/html';
+    if (extname === '.js') contentType = 'text/javascript';
+    else if (extname === '.css') contentType = 'text/css';
+    else if (extname === '.ico') contentType = 'image/x-icon';
+
+    res.writeHead(200, { 'Content-Type': contentType });
+    fs.createReadStream(fullPath).pipe(res);
+  });
 });
 
 ///////////////////////////////////////////////
@@ -37,10 +44,16 @@ const server = http.createServer((req, res) => {
 
 // TODO
 // Exercise 3: Create the WebSocket Server using the HTTP server
-
+const wsServer = new WebSocket.Server({
+  server: server
+});
 
 // TODO
 // Exercise 5: Respond to connection events 
+
+wsServer.on('connection', (socket) => {
+  console.log('New Connection!');
+} )
   // Exercise 6: Respond to client messages
   // Exercise 7: Send a message back to the client, echoing the message received
   // Exercise 8: Broadcast messages received to all other clients
