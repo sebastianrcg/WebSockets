@@ -90,6 +90,15 @@
         wsClient.send(JSON.stringify(data));
       }
 
+      wsClient.onclose = () => {
+        const data = {
+          type: "LEAVING",
+          payload: {username: user}
+        }
+        wsClient.send(JSON.stringify(data));
+
+      }
+
       // TODO:
       // Exercise 7: Respond to messages from the servery by defining the .onmessage event handler
 
@@ -103,10 +112,13 @@
             showMessageReceived(`<b>${payload.username} has joined the room! ${payload.time}</b>`)
             break;
           case "NEW_MESSAGE":
-            showMessageReceived(`<b>${payload.username}: <b><span>${payload.message}</span>`);
+            showMessageReceived(`<b>[${payload.username}]: <b><span>${payload.message}</span>`);
             break;
           case "JOIN_ROOM":
             showMessageReceived(payload.message);
+            break;
+          case "LEAVING":
+            showMessageReceived(`<em>${payload.username} left the room.</em>`);
             break;
           default:
             break;

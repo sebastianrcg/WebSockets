@@ -62,10 +62,24 @@ wsServer.on('connection', (socket) => {
   socket.send(JSON.stringify(data));
 
   socket.on("message", (data)=> {
+    const { type, payload} = JSON.parse(data);
+    
+    if (type === "NEW_USER"){
+      socket.username = payload.username;
+    }
 
     // console.log(data);
     broadcast(data, socket);
     // socket.send("Message received: " + data);
+  })
+
+  socket.on("close", ()=> {
+    
+    const data = {
+      type: "LEAVING",
+      payload: { username: socket.username}
+    }
+    broadcast(JSON.stringify(data));
   })
 } )
   // Exercise 6: Respond to client messages
