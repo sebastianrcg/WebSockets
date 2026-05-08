@@ -78,3 +78,7 @@ form {
   background-attachment: fixed;
   position: relative;
 }
+
+span {
+  font-weight: normal;
+}

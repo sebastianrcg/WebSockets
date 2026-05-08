@@ -53,6 +53,20 @@ const wsServer = new WebSocket.Server({
 
 wsServer.on('connection', (socket) => {
   console.log('New Connection!');
+
+  const data = {
+    type: "JOIN_ROOM", 
+    payload: { message: "Welcome to the Chatroom!"}
+  }
+
+  socket.send(JSON.stringify(data));
+
+  socket.on("message", (data)=> {
+
+    // console.log(data);
+    broadcast(data, socket);
+    // socket.send("Message received: " + data);
+  })
 } )
   // Exercise 6: Respond to client messages
   // Exercise 7: Send a message back to the client, echoing the message received
@@ -66,6 +80,11 @@ wsServer.on('connection', (socket) => {
 function broadcast(data, socketToOmit) {
   // TODO
   // Exercise 8: Implement the broadcast pattern. Exclude the emitting socket!
+  wsServer.clients.forEach(connectedClient => {
+      if (connectedClient.readyState === WebSocket.OPEN && connectedClient !== socketToOmit){
+        connectedClient.send(data)
+      }
+    })
 }
 
 // Start the server listening on localhost:8080

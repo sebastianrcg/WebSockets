@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="/public/styles.css">
   <link rel="icon" href="/public/favicon.ico" type="image/x-icon" />
-  <!-- You may choose to use the message constants defined in the file below -->
   <script src="/utils/constants.js"></script>
   <title>Chatroom Project</title>
 </head>
@@ -30,7 +29,7 @@
     // Initialize in the init() function
     let wsClient; 
 
-    
+    const user = prompt("Enter username: ").toString().trim();
     
     ////////////////////////////////////////////////
     //////////////// DOM SETUP /////////////////////
@@ -49,7 +48,7 @@
       showMessageSent(message);
       messageBox.value = '';
       
-      sendMessageToServer(message);
+      sendMessageToServer(message, user);
     }
 
     ////////////////////////////////////////////////
@@ -76,17 +75,43 @@
 
       wsClient = new WebSocket(URL);
       
-
+      
       // TODO:
       // Exercise 5: Respond to connections by defining the .onopen event handler.
       wsClient.onopen = () => {
-        console.log("Connected to the Websocket Server.")
+        console.log("Connected to the Websocket Server.");
+        const data = {
+          type: "NEW_USER",
+          payload: {username: user}
+        }
+        wsClient.send(JSON.stringify(data));
       }
 
       // TODO:
       // Exercise 7: Respond to messages from the servery by defining the .onmessage event handler
-      // Exercise 9: Parse custom message types, formatting each message based on the type.
 
+      wsClient.onmessage = (messageEvent) => {
+        const message = messageEvent.data;
+
+        const {type, payload} = JSON.parse(message);
+
+        switch (type){
+          case "NEW_USER":
+            showMessageReceived(`<b>${payload.username} has joined the room!</b>`)
+            break;
+          case "NEW_MESSAGE":
+            showMessageReceived(`<b>${payload.username}: <b><span>${payload.message}</span>`);
+            break;
+          case "JOIN_ROOM":
+            showMessageReceived(payload.message);
+            break;
+          default:
+            break;
+        }
+        // showMessageReceived(message);
+      }
+      // Exercise 9: Parse custom message types, formatting each message based on the type.
+      
 
 
       /* Note:
@@ -107,7 +132,7 @@
       }
     }
 
-    function sendMessageToServer(message) {
+    function sendMessageToServer(message, username) {
       // Make sure the client is connected to the ws server
       if (!wsClient) {
         showMessageReceived('No WebSocket connection :(');
@@ -116,7 +141,17 @@
       
       // TODO: 
       // Exercise 6: Send the message from the messageBox to the server
+       
       // Exercise 9: Send the message in a custom message object with .type and .payload properties
+      const data = {
+        type: 'NEW_MESSAGE',
+        payload: { 
+          message: message,
+          username: username
+         }
+      };
+       wsClient.send(JSON.stringify(data));
+
     }
 
     ////////////////////////////////////////////////
