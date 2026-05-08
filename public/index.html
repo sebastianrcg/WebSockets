@@ -80,9 +80,12 @@
       // Exercise 5: Respond to connections by defining the .onopen event handler.
       wsClient.onopen = () => {
         console.log("Connected to the Websocket Server.");
+
+        const date = new Date();
+        const time = date.toLocaleTimeString();
         const data = {
           type: "NEW_USER",
-          payload: {username: user}
+          payload: {username: user, time: time}
         }
         wsClient.send(JSON.stringify(data));
       }
@@ -97,7 +100,7 @@
 
         switch (type){
           case "NEW_USER":
-            showMessageReceived(`<b>${payload.username} has joined the room!</b>`)
+            showMessageReceived(`<b>${payload.username} has joined the room! ${payload.time}</b>`)
             break;
           case "NEW_MESSAGE":
             showMessageReceived(`<b>${payload.username}: <b><span>${payload.message}</span>`);
