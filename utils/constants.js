@@ -1,4 +1,4 @@
-const PORT = process.env.PORT || 8080;
+const PORT = 8080;
 const CLIENT = {
   MESSAGE: {
     NEW_USER: 'NEW_USER',
