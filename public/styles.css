@@ -59,7 +59,6 @@ form {
   display: flex;
   flex-direction: column;
   word-wrap: break-word;
-  
   height: fit-content;
 }
 
